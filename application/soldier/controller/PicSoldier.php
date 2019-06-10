@@ -51,12 +51,14 @@ class PicSoldier extends Base
         $data['join_date'] = date('Y', strtotime($data['join_time']));
 
         if (!empty($data['img_url'])) {
-            $data['img_url'] = json_decode($data['img_url']);
+            $data['img_url'] = json_decode($data['img_url'], true);
             foreach ($data['img_url'] as $k=>$v) {
                 if($v) {
                     $data['img_url'][$k] = get_domain().$v;
                 }
             }
+            krsort($data['img_url']);
+            $data['img_url'] = array_values($data['img_url']);
         }
 
         //点赞列表
