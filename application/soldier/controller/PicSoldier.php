@@ -120,10 +120,15 @@ class PicSoldier extends Base
             return $this->result;
         }
 
-        $count = Db::name('pic_soldier')->where('id', $soldier_id)->count();
-        if ($count == 0) {
+        $user_id = Db::name('pic_soldier')->where('id', $soldier_id)->value('user_id');
+        if (!$user_id) {
             $this->result['code'] = 0;
             $this->result['msg'] = '该参数查找不到军人信息！';
+            return $this->result;
+        }
+        if ($user_id !== $this->user_id) {
+            $this->result['code'] = 0;
+            $this->result['msg'] = '您不是所有者，无权操作！';
             return $this->result;
         }
 
@@ -165,8 +170,19 @@ class PicSoldier extends Base
         }
 
         //更新数据
-        $data_img = Db::name('pic_soldier')->where('id', $soldier_id)->value('img_url');
-        $data_img = json_decode($data_img, true);
+        $data = Db::name('pic_soldier')->where('id', $soldier_id)->field('user_id,img_url')->find();
+        if (!$data) {
+            $this->result['code'] = 0;
+            $this->result['msg'] = '该参数查找不到军人信息！';
+            return $this->result;
+        }
+        if ($data['user_id'] !== $this->user_id) {
+            $this->result['code'] = 0;
+            $this->result['msg'] = '您不是所有者，无权操作！';
+            return $this->result;
+        }
+
+        $data_img = json_decode($data['img_url'], true);
         foreach ($data_img as $k=>$v) {
             if (get_domain().$v === $this->data['img_url']) {
                 unset($data_img[$k]);
