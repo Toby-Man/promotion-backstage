@@ -2,54 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>分享失败</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js" charset="utf-8"></script>
-  <script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/weui/1.1.3/style/weui.min.css">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.1/css/jquery-weui.min.css">
 </head>
 <body>
 <div >测试分享</div>
 </body>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery-weui/1.2.1/js/jquery-weui.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
     var share = function (share) {
         /* eslint-disable */
         wx.ready(function () {
-            wx.onMenuShareTimeline(share)
-            wx.onMenuShareAppMessage(share)
-            wx.onMenuShareQQ(share)
-            wx.onMenuShareWeibo(share)
-            wx.onMenuShareQZone(share)
+            wx.updateAppMessageShareData(share);
+            wx.updateTimelineShareData(share);
         })
 
         wx.error(function(err){
-            alert(JSON.stringify(err));
+            $.toast(JSON.stringify(err));
         });
         /* eslint-enable */
     }
 
 
-    var data;
+    var conf;
     $.ajax({
         type: 'get',
-        url: 'http://www.szsjunshi.com/soldier/WeChat/getShareConfig',
+        url: 'http://www.szsjunshi.com/api/WeChat/getShareConfig',
         data: {url: encodeURI(window.location.href)},
         dataType:'json',
         success: function (res) {
-            data = res.data;
-
-            wx.config(res.data);
+          conf = res.data;
+          conf.debug = false;
+          wx.config(conf);
 
             // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
             share({
-                title: '分享标题', // 分享标题
-                desc: '分享描述', // 分享描述
-                link: 'www.baidu.com', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                imgUrl: '/static/a.jpg', // 分享图标
+                title: '为中国军人加油！', // 分享标题
+                desc: '发送至朋友圈，寻找您的战友！', // 分享描述
+                link: 'http://www.szsjunshi.com:8080/home.html?soldier_id=9E36460F-6FD2-206B-0294-28B65455F9D0', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: 'http://www.szsjunshi.com:8080/img/20.jpg', // 分享图标
                 success: function () {
                     // 用户点击了分享后执行的回调函数
-                    alert('点击了分享');
+                    $.toptip('点击了分享', 'success');
                 }
             });
         }

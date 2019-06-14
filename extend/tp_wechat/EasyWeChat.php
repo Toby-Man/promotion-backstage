@@ -9,6 +9,7 @@
 
 namespace tp_wechat;
 
+use app\common\controller\Log;
 use EasyWeChat\Factory;
 use think\facade\Config;
 use think\facade\Request;
